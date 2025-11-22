@@ -227,6 +227,7 @@ function show_hide_element(){
 		E("fb_status").style.display = "";
 		E("fb_pannel").style.display = "";
 		E("fb_db").style.display = "";
+		E("fb_re").style.display = "none";
 		E("fb_apply_1").style.display = "none";
 		E("fb_apply_2").style.display = "";
 		E("fb_apply_3").style.display = "";
@@ -234,6 +235,7 @@ function show_hide_element(){
 		E("fb_status").style.display = "";
 		E("fb_pannel").style.display = "none";
 		E("fb_db").style.display = "none";
+		E("fb_re").style.display = "";
 		E("fb_apply_1").style.display = "";
 		E("fb_apply_2").style.display = "none";
 		E("fb_apply_3").style.display = "none";
@@ -650,6 +652,12 @@ function upload_data(dbname) {
 														<a type="button" style="vertical-align: middle; cursor:pointer;" class="ks_btn" onclick="database_mission()">备份/恢复数据库</a>
 													</td>
 												</tr>
+												<tr id="fb_re">
+													<th>重置数据库</th>
+													<td>
+														<a type="button" style="vertical-align: middle; cursor:pointer;" class="ks_btn" onclick="save(3)">重置数据库</a>
+													</td>
+												</tr>
 												<tr id="fb_port">
 													<th>面板端口</th>
 													<td>
@@ -684,7 +692,8 @@ function upload_data(dbname) {
 										</div>
 										<div style="margin: 10px 0 10px 5px;" class="splitLine"></div>
 										<div style="margin:10px 0 0 5px">
-											<li>FileBRowser的初始用户名和密码均为：<em>admin</em>，请及时修改，以避免公网访问开启后的安全问题。</li>
+											<li>首次运行，会自动生成用户名密码，注意看<em>启动日志</em>；</li>
+											<li>忘记密码请<em>重置数据库</em>，该操作会删除所有已有设置；</li>
 											<li>登陆后可在【Setting】-【Profile Settings】中修改语言为中文。</li>
 										</div>
 									</td>

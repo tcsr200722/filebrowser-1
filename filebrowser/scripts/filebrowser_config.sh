@@ -6,6 +6,7 @@ alias echo_date='echo 【$(TZ=UTC-8 date -R +%Y年%m月%d日\ %X)】:'
 LOG_FILE=/tmp/upload/filebrowser_log.txt
 FB_LOG_FILE=/tmp/upload/filebrowser.log
 dbfile_save=/koolshare/configs/filebrowser/filebrowser.db
+dbfile_dir=/koolshare/configs/filebrowser
 dbfile_curr=/tmp/fb/filebrowser.db
 LOCK_FILE=/var/lock/filebrowser.lock
 BASH=${0##*/}
@@ -226,6 +227,25 @@ start_fb_process(){
 	fi
 }
 
+make_password(){
+	  if [ ! -f "${dbfile_save}" ]; then
+    	echo_date "ℹ️检测到首次启动插件，生成用户和密码..."
+    	echo_date "ℹ️初始化操作较耗时，请耐心等待..."
+    	/koolshare/bin/filebrowser -d ${dbfile_save} >${dbfile_dir}/admin.account 2>&1 &
+    	sleep 10
+			local USER=$(cat ${dbfile_dir}/admin.account | grep "User" | awk -F"'" '{print $2}')
+    	local PASS=$(cat ${dbfile_dir}/admin.account | grep "randomly generated password" | awk '{print $NF}' | head -n1)
+				if [ -n "${USER}" -a -n "${PASS}" ]; then
+      		echo_date "---------------------------------"
+     			echo_date "😛filebrowser面板用户：${USER}"
+      		echo_date "🔑filebrowser面板密码：${PASS}"
+      		echo_date "---------------------------------"
+      	else
+      		echo_date "生成初始账户失败，请尝试重置数据库"
+      	fi
+    fi
+}
+
 check_config(){
 	lan_ipaddr=$(ifconfig br0|grep -Eo "inet addr.+"|awk -F ":| " '{print $3}' 2>/dev/null)
 	mkdir -p /koolshare/configs/filebrowser
@@ -373,16 +393,19 @@ start_fb (){
 	# 1. check_memory
 	check_memory
 
-	# 2. stop first
+	# 2. make_password when first run
+	make_password
+
+	# 3. stop first
 	close_fb_process
 
-	# 3. check_config
+	# 4. check_config
 	check_config
 
-	# 4. start process
+	# 5. start process
 	start_fb_process
 
-	# 5. open port
+	# 6. open port
 	if [ "${filebrowser_publicswitch}" == "1" ];then
 		close_port >/dev/null 2>&1
 		open_port
@@ -486,6 +509,12 @@ web_submit)
 		echo_date "🔁重启filebrowser！" | tee -a ${LOG_FILE}
 		dbus set filebrowser_enable=1
 		start_fb | tee -a ${LOG_FILE}
+	elif [ "${filebrowser_enable}" == "3" ]; then
+		echo_date "🛠重置filebrowser数据库！" | tee -a ${LOG_FILE}
+		dbus set filebrowser_enable=0
+		rm -rf ${dbfile_save} >/dev/null 2>&1
+		rm -rf ${dbfile_dir}/admin.account >/dev/null 2>&1
+		echo_date "✅重置完成！" | tee -a ${LOG_FILE}
 	else
 		echo_date "ℹ️停止filebrowser！" | tee -a ${LOG_FILE}
 		close_fb | tee -a ${LOG_FILE}

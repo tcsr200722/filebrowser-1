@@ -1,5 +1,9 @@
 KoolCenter FileBrower Changelog for HND platform
 ===========================================
+2.3.0
+   - update 更新filebrower 二进制程序到 v2.48.2
+   - add    启动显示随机登录帐户密码
+
 2.2.1
    - update	更新filebrower 二进制程序到 v2.44.0
 
