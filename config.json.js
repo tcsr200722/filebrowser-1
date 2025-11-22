@@ -1,5 +1,5 @@
 {
-    "author": "MAN KAI, sadog", 
+    "author": "MAN KAI, sadog, vj23456", 
     "description": "FileBrowser：您的可视化路由文件管理系统", 
     "home_url": "Module_filebrowser.asp", 
     "link": "https://github.com/flyhigherpi/filebrowser", 
